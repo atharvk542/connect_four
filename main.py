@@ -55,6 +55,8 @@ def checkWin(board):
 		for j in range(1, board_size):
 			if board[i][j - 1] == board[i][j] and board[i][j] != 0:
 					rowCounter+=1
+			else:
+				rowCounter = 1
 
 			if rowCounter >= 4:
 				return True	
@@ -65,6 +67,8 @@ def checkWin(board):
 		for j in range(1, board_size):
 			if board[j - 1][i] == board[j][i] and board[j][i] != 0:
 				colCounter+=1
+			else:
+				colCounter = 1
 
 			if colCounter >= 4:
 				return True	
@@ -74,15 +78,19 @@ def checkWin(board):
 	for i in range(1, board_size):
 		if board[i - 1][i - 1] == board[i][i] and board[i][i] != 0:
 			diagCounter+=1
+		else:
+			diagCounter = 1
 		
 		if diagCounter >= 4:
 			return True
 
-	# anti diagonal (NOT WORKING)
+	# anti diagonal
 	antiDiagCounter = 1
 	for i in range(board_size - 1):
 		if board[i][board_size - i - 1] == board[i + 1][board_size - i - 2] and board[i][board_size -i - 1] != 0:
 			antiDiagCounter += 1
+		else:
+			antiDiagCounter = 1
 		
 		if antiDiagCounter >= 4:
 			return True
