@@ -31,15 +31,16 @@ while game not finished
 	player = 2 if player == 1 else player = 1 # another ternary
 
 '''
+import random
 
-
-board = [[0] * 4 for _ in range(4)]
+board_size = 8
+board = [[0] * board_size for _ in range(board_size)]
 
 gameOver = False
 
 def placePiece(col, board, player):
 	j = col
-	for i in range(len(board) - 1, -1, -1):
+	for i in range(board_size - 1, -1, -1): # iterate backwards from board_size - 1
 		if board[i][j] == 0:
 			board[i][j] = player
 			return board
@@ -47,70 +48,91 @@ def placePiece(col, board, player):
 	return board
 
 def checkWin(board):
+	# TODO: set counter to 0 if the current square doesn't match, otherwise '1 0 1 0 1 0 1' passes as a row
+	# rows
+	for i in range(board_size):
+		rowCounter = 1 
+		for j in range(1, board_size):
+			if board[i][j - 1] == board[i][j] and board[i][j] != 0:
+					rowCounter+=1
+
+			if rowCounter >= 4:
+				return True	
 	
-	#rows
-	for i in range(len(board)):
-		rowSolved = True
-		for j in range(1, len(board)):
-			if board[i][j] == 0 or board[i][j - 1] != board[i][j]:
-				rowSolved = False
-				break
-		
-		if rowSolved:
-			return True
-	
-	#cols
-	for j in range(len(board)):
-		colSolved = True
-		for i in range(1, len(board)):
-			if board[i][j] == 0 or board[i][j] != board[i-1][j]:
-				colSolved = False
-				break
-		
-		if colSolved:
-			return True
+	# cols
+	for i in range(board_size):
+		colCounter = 1
+		for j in range(1, board_size):
+			if board[j - 1][i] == board[j][i] and board[j][i] != 0:
+				colCounter+=1
+
+			if colCounter >= 4:
+				return True	
 
 	# diagonal
-	diagSolved = True
-	for i in range(len(board)):
-		if board[0][0] == 0 or board[i][i] != board[0][0]:
-			diagSolved = False
-			break
-				
-	if diagSolved:
-		return True
-	
-	# anti diagonal
-	antidiagSolved = True
-	for i in range(len(board)):
-		if board[len(board) - 1][0] == 0 or board[i][len(board) - i - 1] != board[len(board) - 1][0]:
-			antidiagSolved = False
-			break
-	
-	if antidiagSolved:
-		return True
+	diagCounter = 1
+	for i in range(1, board_size):
+		if board[i - 1][i - 1] == board[i][i] and board[i][i] != 0:
+			diagCounter+=1
+		
+		if diagCounter >= 4:
+			return True
 
+	# anti diagonal (NOT WORKING)
+	antiDiagCounter = 1
+	for i in range(board_size - 1):
+		if board[i][board_size - i - 1] == board[i + 1][board_size - i - 2] and board[i][board_size -i - 1] != 0:
+			antiDiagCounter += 1
+		
+		if antiDiagCounter >= 4:
+			return True
+
+	return False
+
+def checkTie(board):
+	if not checkWin(board):
+		for i in board:
+			for j in i:
+				if j == 0:
+					return False
+		
+		return True
+	
 	return False
 
 def printBoard(board):
 	print('-'*10 + "CURRENT BOARD" + '-'*10)
-	for i in range(len(board)):
-		for j in range(len(board)):
+	for i in range(board_size):
+		for j in range(board_size):
 			print(board[i][j], end=' ')
 
 		print()
 	print('-'*33)
 
+# this will be given to external classes to choose a column to play in
+# what should be exposed is the board, other player's last move
+def chooseMove(player):
+	if player == 1:
+		return random.randint(0, board_size - 1)
+	else:
+		return random.randint(0, board_size - 1)
+
 player = 1
 while not gameOver:
 	print("player " + str(player) + "'s turn")
-	selected_col = int(input("select a column (please be nice. put something 1 to 4 in)")) - 1
-	board, _ = placePiece(selected_col, board, player)
+	selected_col = chooseMove(player)
+	# selected_col = int(input(f" pick col 1 - {board_size}: ")) - 1
+	board = placePiece(selected_col, board, player)
 	printBoard(board)
 	win = checkWin(board)
+	tie = checkTie(board)
 
 	if win:
 		print("player " + str(player) + " has won")
+		gameOver = True
+	
+	if tie: 
+		print("the game has tied")
 		gameOver = True
 	
 	player = 2 if player == 1 else 1
