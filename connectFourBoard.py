@@ -10,6 +10,7 @@ class ConnectFourBoard:
 
     def placePiece(self, col, screen, pygame):
         j = col
+
         for i in range(self.board_size - 1, -1, -1): # iterate backwards from board_size - 1
             if self.board[i][j] == 0:
                 placed_by = self.player

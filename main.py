@@ -105,16 +105,27 @@ if __name__ == "__main__":
 
 	running = True
 	while running: 
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				running = False
 		while not engine.gameOver:
+			curCol = -1
+			columnSelected = False
 			pygame.display.flip()
 			print("player " + str(engine.player) + "'s turn")
 			# selected_col = chooseMove(player)
 			# selected_col = move_chooser.choose_move(engine)
-			selected_col = int(input("enter column to place piece: ")) - 1
-			engine.placePiece(selected_col)
+			# selected_col = int(input("enter column to place piece: ")) - 1
+
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					running = False
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					pos = pygame.mouse.get_pos()
+					curCol = pos[0] // (600 // engine.board.board_size)
+					columnSelected = True
+
+			if not columnSelected:
+				continue
+				
+			engine.placePiece(curCol)
 			engine.printBoard()
 
 			# TODO: consolidate this into a checkBoard function checking for win and tie
@@ -122,8 +133,8 @@ if __name__ == "__main__":
 			tie = engine.checkTie()
 
 			if win:
-				winner = 2 if engine.player == 1 else 1 # have to flip since engine is already on next move
-				print("player " + str(winner) + " has won")
+				# winner = 2 if engine.player == 1 else 1 # have to flip since engine is already on next move
+				print("player " + str(engine.player) + " has won")
 				engine.gameOver = True
 			
 			if tie: 
