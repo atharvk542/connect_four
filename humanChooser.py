@@ -8,6 +8,7 @@ class HumanChooser:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return None
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN:                
                     x, _ = pygame.mouse.get_pos()
-                    return x // square_size
+                    if x // square_size < engine.board.board_size and engine.board.board[0][x // square_size] == 0:
+                        return x // square_size
