@@ -1,6 +1,7 @@
 import random
 import pygame
 from moveChooser import MoveChooser
+from humanChooser import HumanChooser
 from connectFourBoard import ConnectFourBoard
 
 class ConnectFour:
@@ -9,16 +10,18 @@ class ConnectFour:
 	gameOver = False
 	player = 1
 	last_move = None
-	screen = pygame.display.set_mode((800, 600))
+	screen = pygame.display.set_mode((600, 600))
 
 	def __init__(self, board_size):
 		self.board = ConnectFourBoard(board_size)
 		self.last_move = None
-		self.board.drawBoard(pygame, self.screen, 600 // self.board.board_size)
+		self.board.drawBoard(pygame, self.screen, self.screen.get_width() // self.board.board_size)
 		pygame.display.flip()
 
 	def placePiece(self, col):
-		self.board.placePiece(col, self.screen, pygame)
+		self.board.placePiece(self.player, col, self.screen, pygame)
+		self.last_move = col
+		self.player = 2 if self.player == 1 else 1
 		# j = col
 		# for i in range(self.board.board_size - 1, -1, -1): # iterate backwards from board_size - 1
 		# 	if self.board.board[i][j] == 0:
@@ -101,31 +104,23 @@ class ConnectFour:
 
 if __name__ == "__main__":
 	engine = ConnectFour(8)
-	# move_chooser = MoveChooser()
 
 	running = True
+	player_choosers = [MoveChooser(), HumanChooser()]
+
 	while running: 
 		while not engine.gameOver:
-			curCol = -1
-			columnSelected = False
+			current_chooser = player_choosers[engine.player - 1]
 			pygame.display.flip()
+
 			print("player " + str(engine.player) + "'s turn")
-			# selected_col = chooseMove(player)
-			# selected_col = move_chooser.choose_move(engine)
-			# selected_col = int(input("enter column to place piece: ")) - 1
+			selected_col = current_chooser.choose_move(engine)
 
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					running = False
-				if event.type == pygame.MOUSEBUTTONDOWN:
-					pos = pygame.mouse.get_pos()
-					curCol = pos[0] // (600 // engine.board.board_size)
-					columnSelected = True
-
-			if not columnSelected:
-				continue
 				
-			engine.placePiece(curCol)
+			engine.placePiece(selected_col)
 			engine.printBoard()
 
 			# TODO: consolidate this into a checkBoard function checking for win and tie

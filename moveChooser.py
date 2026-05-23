@@ -5,7 +5,5 @@ class MoveChooser:
 		board = engine.board
 		current_player = engine.player
 		last_move = engine.last_move
-		if engine.player == 1:
-			return random.randint(0, engine.board_size - 1)
-		else:
-			return random.randint(0, engine.board_size - 1)
+		
+		return last_move if last_move else random.randint(0, board.board_size - 1)
