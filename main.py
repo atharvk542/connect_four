@@ -23,17 +23,17 @@ class ConnectFour:
         self.board.placePiece(self.player, col, self.screen, pygame)
         self.last_move = col
         self.player = 2 if self.player == 1 else 1
-        # j = col
-        # for i in range(self.board.board_size - 1, -1, -1): # iterate backwards from board_size - 1
-        # 	if self.board.board[i][j] == 0:
-        # 		placed_by = self.player
-        # 		self.board.board[i][j] = self.player
-        # 		self.player = 2 if self.player == 1 else 1
-        # 		self.last_move = (i, j, placed_by)
-        # 		return self.board
-        
-        # return self.board
 
+    def simulatePlacePiece(self, col):
+        for i in range(self.board.board_size - 1, -1, -1): # iterate backwards from board_size - 1
+            if self.board.board[i][col] == 0:
+                self.board.board[i][col] = self.player
+                return self.board
+        
+        return self.board
+
+    # TODO: refactor this into a checkConsecutive that will check for N consecutive in a row
+    # which can be used in the minimax evaluateBoard function as well
     def checkWin(self):
         # rows
         for i in range(self.board.board_size):
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     engine = ConnectFour(8)
 
     running = True
-    player_choosers = [MoveChooser(), HumanChooser()]
+    player_choosers = [MoveChooser(), MoveChooser()]
 
     while running:
         for event in pygame.event.get():
@@ -121,7 +121,7 @@ if __name__ == "__main__":
         pygame.display.flip()
 
         print("player " + str(engine.player) + "'s turn")
-        selected_col = current_chooser.choose_move(engine)
+        selected_col = current_chooser.choose_move(engine) # TODO: check for valid column choice
 
         engine.placePiece(selected_col)
         engine.printBoard()
@@ -133,10 +133,12 @@ if __name__ == "__main__":
         if win:
             # winner = 2 if engine.player == 1 else 1 # have to flip since engine is already on next move
             print("player " + str(engine.player) + " has won")
+            pygame.time.wait(1000)
             running = False
 
         if tie:
             print("the game has tied")
+            pygame.time.wait(1000)
             running = False
 
     pygame.quit()

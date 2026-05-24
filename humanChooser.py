@@ -12,3 +12,5 @@ class HumanChooser:
                     x, _ = pygame.mouse.get_pos()
                     if x // square_size < engine.board.board_size and engine.board.board[0][x // square_size] == 0:
                         return x // square_size
+
+
