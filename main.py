@@ -28,13 +28,16 @@ class ConnectFour:
         for i in range(self.board.board_size - 1, -1, -1): # iterate backwards from board_size - 1
             if self.board.board[i][col] == 0:
                 self.board.board[i][col] = self.player
-                self.last_move = (i, col, self.player)
+                self.last_move = self.player
                 return self.board
         
         return self.board
 
     # TODO: refactor this into a checkConsecutive that will check for N consecutive in a row
     # which can be used in the minimax evaluateBoard function as well
+
+
+    # TODO use last placed piece to check for win instead of iterating through whole board
     def checkWin(self):
         # rows
         for i in range(self.board.board_size):
@@ -108,7 +111,7 @@ if __name__ == "__main__":
     engine = ConnectFour(8)
 
     running = True
-    player_choosers = [MoveChooser(), MoveChooser()]
+    player_choosers = [HumanChooser(), MoveChooser()]
 
     while running:
         for event in pygame.event.get():
@@ -132,8 +135,8 @@ if __name__ == "__main__":
         tie = engine.checkTie()
 
         if win:
-            # winner = 2 if engine.player == 1 else 1 # have to flip since engine is already on next move
-            print("player " + str(engine.player) + " has won")
+            winner = 2 if engine.player == 1 else 1 # have to flip since engine is already on next move
+            print("player " + str(winner) + " has won")
             pygame.time.wait(1000)
             running = False
 
