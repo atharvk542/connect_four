@@ -33,11 +33,10 @@ class ConnectFour:
         
         return self.board
 
-    # TODO: refactor this into a checkConsecutive that will check for N consecutive in a row
+    # TODO: create a checkConsecutive that will check for N consecutive in a row
     # which can be used in the minimax evaluateBoard function as well
 
-
-    # TODO use last placed piece to check for win instead of iterating through whole board
+    # TODO fix the diagonal and anti-diagonal logic
     def checkWin(self):
         # rows
         for i in range(self.board.board_size):
@@ -64,26 +63,18 @@ class ConnectFour:
                     return True	
 
         # diagonal
-        diagCounter = 1
-        for i in range(1, self.board.board_size):
-            if self.board.board[i - 1][i - 1] == self.board.board[i][i] and self.board.board[i][i] != 0:
-                diagCounter+=1
-            else:
-                diagCounter = 1
-            
-            if diagCounter >= 4:
-                return True
+        for i in range(self.board.board_size - 3):
+            for j in range(self.board.board_size - 3):
+                if (self.board.board[i][j] != 0 and
+                    self.board.board[i][j] == self.board.board[i + 1][j + 1] == self.board.board[i + 2][j + 2] == self.board.board[i + 3][j + 3]):
+                    return True
 
-        # anti diagonal
-        antiDiagCounter = 1
-        for i in range(self.board.board_size - 1):
-            if self.board.board[i][self.board.board_size - i - 1] == self.board.board[i + 1][self.board.board_size - i - 2] and self.board.board[i][self.board.board_size -i - 1] != 0:
-                antiDiagCounter += 1
-            else:
-                antiDiagCounter = 1
-            
-            if antiDiagCounter >= 4:
-                return True
+        # anti-diagonal
+        for i in range(3, self.board.board_size):
+            for j in range(self.board.board_size - 3):
+                if (self.board.board[i][j] != 0 and
+                    self.board.board[i][j] == self.board.board[i - 1][j + 1] == self.board.board[i - 2][j + 2] == self.board.board[i - 3][j + 3]):
+                    return True
 
         return False
 
