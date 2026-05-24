@@ -1,5 +1,8 @@
 # connect 4
 
-it doesn't work with random players yet but i will maybe implement that later
+there is no input column handling at all so be nice to it
 
-also there is no input handling or error checking at all so please be nice to it
+change between a MinimaxChooser and a HumanChooser in `player_choosers` in `main.py`
+
+RL chooser is WIP 
+

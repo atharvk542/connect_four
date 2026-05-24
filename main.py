@@ -1,7 +1,7 @@
 import random
 import sys
 import pygame
-from moveChooser import MoveChooser
+from minimaxChooser import MinimaxChooser
 from humanChooser import HumanChooser
 from connectFourBoard import ConnectFourBoard
 
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     engine = ConnectFour(8)
 
     running = True
-    player_choosers = [HumanChooser(), MoveChooser()]
+    player_choosers = [HumanChooser(), MinimaxChooser()]
 
     while running:
         for event in pygame.event.get():
