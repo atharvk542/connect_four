@@ -1,6 +1,7 @@
 import pygame
+from chooser import Chooser
 
-class HumanChooser:
+class HumanChooser(Chooser):
     def choose_move(self, engine):
         square_size = engine.screen.get_width() // engine.board.board_size
 

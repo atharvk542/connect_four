@@ -1,6 +1,7 @@
 import random
+from chooser import Chooser
 
-class MinimaxChooser: 
+class MinimaxChooser(Chooser): 
 	def choose_move(self, engine):
 		board = engine.board
 		bestScore = float('-inf')

@@ -102,7 +102,7 @@ if __name__ == "__main__":
     engine = ConnectFour(8)
 
     running = True
-    player_choosers = [HumanChooser(), MinimaxChooser()]
+    player_choosers = [HumanChooser(), HumanChooser()]
 
     while running:
         for event in pygame.event.get():
