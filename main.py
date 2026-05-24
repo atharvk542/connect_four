@@ -28,6 +28,7 @@ class ConnectFour:
         for i in range(self.board.board_size - 1, -1, -1): # iterate backwards from board_size - 1
             if self.board.board[i][col] == 0:
                 self.board.board[i][col] = self.player
+                self.last_move = (i, col, self.player)
                 return self.board
         
         return self.board

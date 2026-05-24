@@ -3,49 +3,76 @@ import random
 class MoveChooser: 
 	def choose_move(self, engine):
 		board = engine.board
-		current_player = engine.player
-		last_move = engine.last_move
-		
 		bestScore = float('-inf')
 		bestMove = None
+		# simulate each possible top move here, call minimax for the remaining depth,
+		# then undo the simulated move and restore engine state
 		for col in range(board.board_size):
 			if board.board[0][col] == 0:
-				score = self.minimax(engine, 4, True)
+				prev_last = engine.last_move
+				prev_player = engine.player
+				engine.simulatePlacePiece(col)
+				# switch to opponent for the recursive search
+				engine.player = 2 if engine.player == 1 else 1
+				score = self.minimax(engine, 3, False, prev_player)
+				# restore player and undo simulated move
+				engine.player = prev_player
+				for row in range(engine.board.board_size):
+					if engine.board.board[row][col] != 0:
+						engine.board.board[row][col] = 0
+						break
+				engine.last_move = prev_last
 				if score > bestScore:
 					bestScore = score
 					bestMove = col
-		
+
 		return bestMove
 		
-	def minimax(self, engine, depth, maximizing_player):
+	def minimax(self, engine, depth, maximizing_player, orig_player=None):
+		# orig_player is the player who initiated the search (used for evaluation)
+		if orig_player is None:
+			orig_player = engine.player
+
 		if depth == 0 or engine.checkWin() or engine.checkTie():
-			return self.evaluateBoard(engine, engine.player)
+			return self.evaluateBoard(engine, orig_player)
 
 		if maximizing_player:
 			max_eval = float('-inf')
 			for col in range(engine.board.board_size):
 				if engine.board.board[0][col] == 0:
+					# simulate move for whoever is currently set in engine.player
+					prev_last = engine.last_move
+					prev_player = engine.player
 					engine.simulatePlacePiece(col)
-					eval = self.minimax(engine, depth - 1, False)
-					max_eval = max(max_eval, eval)
-					# undo the move
+					# switch player for next eval
+					engine.player = 2 if engine.player == 1 else 1
+					eval = self.minimax(engine, depth - 1, False, orig_player)
+					# restore player and undo the move
+					engine.player = prev_player
 					for row in range(engine.board.board_size):
 						if engine.board.board[row][col] != 0:
 							engine.board.board[row][col] = 0
 							break
+					engine.last_move = prev_last
+					max_eval = max(max_eval, eval)
 			return max_eval
 		else:
 			min_eval = float('inf')
 			for col in range(engine.board.board_size):
 				if engine.board.board[0][col] == 0:
+					prev_last = engine.last_move
+					prev_player = engine.player
 					engine.simulatePlacePiece(col)
-					eval = self.minimax(engine, depth - 1, True)
-					min_eval = min(min_eval, eval)
-					# undo the move
+					engine.player = 2 if engine.player == 1 else 1
+					eval = self.minimax(engine, depth - 1, True, orig_player)
+					# undo the move and restore player
+					engine.player = prev_player
 					for row in range(engine.board.board_size):
 						if engine.board.board[row][col] != 0:
 							engine.board.board[row][col] = 0
 							break
+					engine.last_move = prev_last
+					min_eval = min(min_eval, eval)
 			return min_eval
 	
 	def evaluateBoard(self, engine, player):
