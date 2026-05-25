@@ -102,7 +102,7 @@ if __name__ == "__main__":
     engine = ConnectFour(8)
 
     running = True
-    player_choosers = [HumanChooser(), HumanChooser()]
+    player_choosers = [HumanChooser(), MinimaxChooser()]
 
     pygame.init()
 
@@ -118,7 +118,11 @@ if __name__ == "__main__":
         pygame.display.flip()
 
         print("player " + str(engine.player) + "'s turn")
-        selected_col = current_chooser.choose_move(engine) # TODO: check for valid column choice
+        valid_move = False
+        while not valid_move:
+            selected_col = current_chooser.choose_move(engine) # TODO: check for valid column choice
+            if 0 <= selected_col < engine.board.board_size and engine.board.board[0][selected_col] == 0:
+                valid_move = True
 
         engine.placePiece(selected_col)
         engine.printBoard()
