@@ -1,7 +1,7 @@
 # connect 4
 
 to play: 
-1. set up a venv with `python3 -m venv .venv` or however you want to do it
+1. set up a venv with `python3 -m venv .venv` or however you want to do it and activate with `source .venv/bin/activate`
 2. install pygame with `pip install -r requirements.txt`
 3. start the game with `python main.py`
 

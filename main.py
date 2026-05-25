@@ -104,6 +104,8 @@ if __name__ == "__main__":
     running = True
     player_choosers = [HumanChooser(), HumanChooser()]
 
+    pygame.init()
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -128,12 +130,21 @@ if __name__ == "__main__":
         if win:
             winner = 2 if engine.player == 1 else 1 # have to flip since engine is already on next move
             print("player " + str(winner) + " has won")
-            pygame.time.wait(1000)
+            font = pygame.font.SysFont('Arial', 40, bold=True)
+            color = (255, 0, 0) if winner == 1 else (255, 255, 0)
+            text_surface = font.render(f"Player {winner} has won!", True, color, (0, 0, 0))
+            engine.screen.blit(text_surface, (150, 200))
+            pygame.display.flip()
+            pygame.time.wait(3000)
             running = False
 
         if tie:
             print("the game has tied")
-            pygame.time.wait(1000)
+            font = pygame.font.SysFont('Arial', 40, bold=True)
+            text_surface = font.render("The game has tied!", True, (255, 255, 255), (0, 0, 0))
+            engine.screen.blit(text_surface, (150, 200))
+            pygame.display.flip()
+            pygame.time.wait(3000)
             running = False
 
     pygame.quit()
