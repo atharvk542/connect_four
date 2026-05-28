@@ -91,37 +91,48 @@ class MinimaxChooser(Chooser):
 					min_eval = min(min_eval, eval)
 			return min_eval
 	
-	# TODO: scan every 4 sequence for 2 or 3 tokens (with some gaussian noise?) and add central column control
+	# TODO: add central column control, and bonus/negatives for playable on left or right
 	def evaluateBoard(self, engine, player):
 		boardScore = 0
 		# horizontal
 		for row in range(engine.board.board_size):
 			for col in range(engine.board.board_size - 3):
-				window = [engine.board.board[row][col + i] for i in range(4)]
-				boardScore += self.evaluateWindow(window, player)
+				coords = [(row, col + i) for i in range(4)]
+				window = [engine.board.board[r][c] for r, c in coords]
+				boardScore += self.evaluateWindow(engine, window, coords, player)
 
 		# vertical
 		for col in range(engine.board.board_size):
 			for row in range(engine.board.board_size - 3):
-				window = [engine.board.board[row + i][col] for i in range(4)]
-				boardScore += self.evaluateWindow(window, player)
-		
+				coords = [(row + i, col) for i in range(4)]
+				window = [engine.board.board[r][c] for r, c in coords]
+				boardScore += self.evaluateWindow(engine, window, coords, player)
+
 		# diagonal
 		for row in range(engine.board.board_size - 3):
 			for col in range(engine.board.board_size - 3):
-				window = [engine.board.board[row + i][col + i] for i in range(4)]
-				boardScore += self.evaluateWindow(window, player)
+				coords = [(row + i, col + i) for i in range(4)]
+				window = [engine.board.board[r][c] for r, c in coords]
+				boardScore += self.evaluateWindow(engine, window, coords, player)
 
 		# anti-diagonal
 		for row in range(3, engine.board.board_size):
 			for col in range(engine.board.board_size - 3):
-				window = [engine.board.board[row - i][col + i] for i in range(4)]
-				boardScore += self.evaluateWindow(window, player)
+				coords = [(row - i, col + i) for i in range(4)]
+				window = [engine.board.board[r][c] for r, c in coords]
+				boardScore += self.evaluateWindow(engine, window, coords, player)
+
 		return boardScore
 		
-	def evaluateWindow(self, window, player):
+	def evaluateWindow(self, engine, window, coords, player):
 		score = 0
 		opp_player = 2 if player == 1 else 1
+		empty_count = window.count(0)
+		playable_empty = self.window_has_playable_empty(engine, coords)
+
+		# if the window has empty cells but none can be played soon, don't overvalue it
+		if empty_count > 0 and not playable_empty:
+			return 0
 
 		if window.count(player) == 4:
 			score += 10000
@@ -136,3 +147,19 @@ class MinimaxChooser(Chooser):
 			score -= 10000
 
 		return score
+	
+	def is_playable(self, engine, row, col):
+		size = engine.board.board_size
+
+		if engine.board.board[row][col] != 0:
+			return False
+
+		return row == size - 1 or engine.board.board[row + 1][col] != 0
+
+
+	def window_has_playable_empty(self, engine, coords):
+		for row, col in coords:
+			if engine.board.board[row][col] == 0 and self.is_playable(engine, row, col):
+				return True
+		return False
+
